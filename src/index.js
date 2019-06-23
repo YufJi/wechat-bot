@@ -28,13 +28,13 @@ wechaty.on('message', async msg => {
   if (room) {
     const topic = await room.topic();
     if (testTopic.includes(topic)) {
-      await talk(text, room)
+      await talk(text, contact, room)
     }
    
   } else {
     const nickname = (await contact.alias()) || contact.name();
     if (testNickName.includes(nickname)) {
-      await talk(text, contact)
+      await talk(text, contact, room)
     }
   }
 })
@@ -46,12 +46,16 @@ async function start() {
 start()
 
 
-async function talk(text, obj) {
+async function talk(text, contact, room) {
+  const city = contact.city();
+  if (room) {
+    contact = room;
+  }
   if(text.indexOf('天气') > -1) {
-    let weather = await genWeather();
+    let weather = await genWeather(city);
     let str = `${weather}
     -----来自 Yuf_bot`
-    await obj.say(str)//发送消息
+    await contact.say(str)//发送消息
   }
   if(isJoke(text)) {
     if(jokes.length === 0) {
@@ -60,7 +64,7 @@ async function talk(text, obj) {
     const joke = jokes.pop();
     let str = `${joke.content}
     -----来自 Yuf_bot`
-    await obj.say(str)//发送消息
+    await contact.say(str)//发送消息
   }
 }
 
