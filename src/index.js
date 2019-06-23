@@ -1,6 +1,4 @@
 const { Wechaty, Room } = require('wechaty') // import { Wechaty } from 'wechaty'
-const dayjs = require('dayjs')
-const Qrcode = require('qrcode-terminal');
 const opn = require('chrome-opn')
 const { genWeather, isJoke, genJoke } = require('./tools')
 const { testNickName, testTopic } = require('./config')
@@ -17,6 +15,7 @@ try {
     const url = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrcode)}`
     console.log(`Scan QR Code to login: ${status}\n ${url}`)
     opn(url);
+
   })
   wechaty.on('login', user => console.log(`User ${user} logined`))
 } catch (error) {
@@ -26,24 +25,16 @@ wechaty.on('message', async msg => {
   const room = msg.room();
   const text = msg.text();
   const contact = msg.from();
-  if (!room) {
+  if (room) {
+    const topic = await room.topic();
+    if (testTopic.includes(topic)) {
+      await talk(text, room)
+    }
+   
+  } else {
     const nickname = (await contact.alias()) || contact.name();
     if (testNickName.includes(nickname)) {
-      if(text.indexOf('天气') > -1) {
-        let weather = await genWeather();
-        let str = `${weather}
-        -----来自 Yuf_bot`
-        await contact.say(str)//发送消息
-      }
-      if(isJoke(text)) {
-        if(jokes.length === 0) {
-          jokes = await genJoke();
-        }
-        const joke = jokes.pop();
-        let str = `${joke.content}
-        -----来自 Yuf_bot`
-        await contact.say(str)//发送消息
-      }
+      await talk(text, contact)
     }
   }
 })
@@ -53,6 +44,25 @@ async function start() {
 }
 
 start()
+
+
+async function talk(text, obj) {
+  if(text.indexOf('天气') > -1) {
+    let weather = await genWeather();
+    let str = `${weather}
+    -----来自 Yuf_bot`
+    await obj.say(str)//发送消息
+  }
+  if(isJoke(text)) {
+    if(jokes.length === 0) {
+      jokes = await genJoke();
+    }
+    const joke = jokes.pop();
+    let str = `${joke.content}
+    -----来自 Yuf_bot`
+    await obj.say(str)//发送消息
+  }
+}
 
  
 
