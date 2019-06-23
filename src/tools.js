@@ -2,12 +2,12 @@ const dayjs = require('dayjs')
 const _ = require('lodash')
 const { getWeather, getJoke } = require('./api')
 
-async function genWeather(ci) {
+async function genWeather() {
   const day = dayjs().format('YYYY-MM-DD')
   let weather = ''
 
   try {
-    const { data = {} } = await getWeather(ci);
+    const { data = {} } = await getWeather();
     const { city, realtime = {}, future = [] } = data;
     const cur = _.find(future, o => o.date === day) || {};
     weather = `${day}

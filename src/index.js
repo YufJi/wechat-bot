@@ -1,7 +1,8 @@
-const { Wechaty, Room } = require('wechaty') // import { Wechaty } from 'wechaty'
+const { Wechaty, Contact } = require('wechaty') // import { Wechaty } from 'wechaty'
 const opn = require('chrome-opn')
+const schedule = require('node-schedule');
 const { genWeather, isJoke, genJoke } = require('./tools')
-const { testNickName, testTopic } = require('./config')
+const { testNickName, testTopic, xuhaoqi } = require('./config')
 
 let jokes = [];
  
@@ -15,12 +16,14 @@ try {
     const url = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(qrcode)}`
     console.log(`Scan QR Code to login: ${status}\n ${url}`)
     opn(url);
-
   })
-  wechaty.on('login', user => console.log(`User ${user} logined`))
+  wechaty.on('login', async user => {
+    console.log(`User ${user} logined`)
+  })
 } catch (error) {
   console.log(error, '检查是不是已经登录了')
 }
+
 wechaty.on('message', async msg => {
   const room = msg.room();
   const text = msg.text();
@@ -32,6 +35,7 @@ wechaty.on('message', async msg => {
     }
    
   } else {
+    console.log(contact.name(), 'name', contact.id);
     const nickname = (await contact.alias()) || contact.name();
     if (testNickName.includes(nickname)) {
       await talk(text, contact, room)
@@ -40,19 +44,25 @@ wechaty.on('message', async msg => {
 })
 
 async function start() {
+  
   await wechaty.start();
+
+  const xuhaoqi = new wechaty.Contact(xuhaoqi)
+  const job = schedule.scheduleJob('13 30 7 * * *', () => {
+    talk('天气', xuhaoqi, null)
+  });
+  
 }
 
 start()
 
 
 async function talk(text, contact, room) {
-  const city = contact.city();
   if (room) {
     contact = room;
   }
   if(text.indexOf('天气') > -1) {
-    let weather = await genWeather(city);
+    let weather = await genWeather();
     let str = `${weather}
     -----来自 Yuf_bot`
     await contact.say(str)//发送消息
