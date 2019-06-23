@@ -8,24 +8,38 @@ async function genWeather() {
 
   try {
     const { data = {} } = await getWeather();
-    const { city, realtime = {}, future = [] } = data;
-    const cur = _.find(future, o => o.date === day) || {};
+//     const { city, realtime = {}, future = [] } = data;
+//     const cur = _.find(future, o => o.date === day) || {};
+//     weather = `${day}
+// ${city}今天:
+//     ${cur.weather}
+//     ${cur.direct}
+// 当前天气情况:
+//     温度: ${realtime.temperature}
+//     湿度: ${realtime.humidity}
+//     风向: ${realtime.direct}
+//     风力: ${realtime.power}
+//     空气质量指数: ${realtime.aqi}`
+    const { sk, today } = data;
     weather = `${day}
-${city}今天:
-    ${cur.weather}
-    ${cur.direct}
-当前天气情况:
-    温度: ${realtime.temperature}
-    湿度: ${realtime.humidity}
-    风向: ${realtime.direct}
-    风力: ${realtime.power}
-    空气质量指数: ${realtime.aqi}`
+
+${today.city}今天:
+    ${today.temperature}
+    ${today.weather}
+    ${today.wind}
+    ${today.dressing_advice}
+
+当前:
+    温度: ${sk.temp}
+    湿度: ${sk.humidity}
+    风向: ${sk.wind_direction}
+    风力: ${sk.wind_strength}`
 
   } catch (error) {
     console.log(error)
   }
   
-  return weather;
+  return weather.replace('天气', '');
 }
 
 

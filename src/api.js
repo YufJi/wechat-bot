@@ -3,9 +3,9 @@ const { key } = require('./config')
 
 function getWeather(city) {
   return request({
-    url: 'http://apis.juhe.cn/simpleWeather/query',
+    url: 'http://v.juhe.cn/weather/index',
     params: {
-      city: city ||'杭州',
+      cityname: city ||'杭州',
       key: key.weather
     }
   })
