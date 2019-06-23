@@ -47,9 +47,9 @@ async function start() {
   
   await wechaty.start();
 
-  const xuhaoqi = new wechaty.Contact(xuhaoqi)
+  const hh = new wechaty.Contact(xuhaoqi)
   const job = schedule.scheduleJob('13 30 7 * * *', () => {
-    talk('天气', xuhaoqi, null)
+    talk('天气', hh, null)
   });
   
 }
@@ -64,7 +64,7 @@ async function talk(text, contact, room) {
   if(text.indexOf('天气') > -1) {
     let weather = await genWeather();
     let str = `${weather}
-    -----来自 Yuf_bot`
+      -----来自 Yuf_bot`
     await contact.say(str)//发送消息
   }
   if(isJoke(text)) {
@@ -73,7 +73,7 @@ async function talk(text, contact, room) {
     }
     const joke = jokes.pop();
     let str = `${joke.content}
-    -----来自 Yuf_bot`
+      -----来自 Yuf_bot`
     await contact.say(str)//发送消息
   }
 }
