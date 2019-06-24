@@ -52,12 +52,11 @@ async function start() {
 
 start()
 
-
 async function talk(text, contact, room) {
   const xx = room ? room : contact
   if(text.indexOf('天气') > -1) {
-    let province  = contact.province().toLowerCase() || '';
-    let city = contact.city().toLowerCase() || '';
+    let province  = (contact.province() || '').toLowerCase();
+    let city = (contact.city() || '').toLowerCase();
     const provinces = ['beijing', 'shanghai', 'chongqing', 'tianjin', 'xianggang', 'aomen', 'taiwan'];
     if (provinces.includes(province)) {
       city = province;
