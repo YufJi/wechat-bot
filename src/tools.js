@@ -2,41 +2,37 @@ const dayjs = require('dayjs')
 const _ = require('lodash')
 const { getWeather, getJoke } = require('./api')
 
-async function genWeather() {
+async function genWeather(provience, city) {
+  provience = provience || '上海';
+  city = city || '上海';
   const day = dayjs().format('YYYY-MM-DD')
   let weather = ''
 
   try {
-    const { data = {} } = await getWeather();
-//     const { city, realtime = {}, future = [] } = data;
-//     const cur = _.find(future, o => o.date === day) || {};
-//     weather = `${day}
-// ${city}今天:
-//     ${cur.weather}
-//     ${cur.direct}
-// 当前天气情况:
-//     温度: ${realtime.temperature}
-//     湿度: ${realtime.humidity}
-//     风向: ${realtime.direct}
-//     风力: ${realtime.power}
-//     空气质量指数: ${realtime.aqi}`
-    const { sk, today } = data;
-    weather = `${day}
+    const { data = {} } = await getWeather(provience, city);
+    const {
+      tem,
+      status,
+      humidity,
+      wind,
+      wea_alert,
+      tips,
+      live_index
+    } = data;
 
-${today.city}今天:
-    ${today.temperature}
-    ${today.weather}
-    ${today.wind}
-    ${today.dressing_advice}
+    weather = `${city}当前
+${tem}
+${status}
+${humidity}
+${wind}
+${wea_alert}
+${tips}
 
-当前:
-    温度: ${sk.temp}
-    湿度: ${sk.humidity}
-    风向: ${sk.wind_direction}
-    风力: ${sk.wind_strength}`
+${live_index}`
 
   } catch (error) {
     console.log(error)
+    weather = 'ps: 获取数据失败'
   }
   
   return weather.replace('天气', '');

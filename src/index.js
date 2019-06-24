@@ -1,4 +1,4 @@
-const { Wechaty, Contact } = require('wechaty') // import { Wechaty } from 'wechaty'
+const { Wechaty } = require('wechaty') 
 const opn = require('chrome-opn')
 const schedule = require('node-schedule');
 const { genWeather, isJoke, genJoke } = require('./tools')
@@ -44,10 +44,10 @@ async function start() {
   
   await wechaty.start();
 
-  const hh = await wechaty.Contact.find({ alias: xuhaoqi })
-  const job = schedule.scheduleJob('13 30 7 * * *', () => {
-    talk('天气', hh, null)
-  });
+  // const hh = await wechaty.Contact.find({ alias: xuhaoqi })
+  // const job = schedule.scheduleJob('13 30 7 * * *', () => {
+  //   talk('天气', hh, null)
+  // });
 }
 
 start()
@@ -55,11 +55,16 @@ start()
 
 async function talk(text, contact, room) {
   const xx = room ? room : contact
-  if(text.indexOf('天气') > -1 && !room) {
-    let weather = await genWeather();
-    let str = `${weather}
-
-        -----来自 Yuf_bot`
+  if(text.indexOf('天气') > -1) {
+    let province  = contact.province().toLowerCase() || '';
+    let city = contact.city().toLowerCase() || '';
+    const provinces = ['beijing', 'shanghai', 'chongqing', 'tianjin', 'xianggang', 'aomen', 'taiwan'];
+    if (provinces.includes(province)) {
+      city = province;
+    }
+    console.log(province, city, 'citycitycity')
+    let weather = await genWeather(province, city);
+    let str = `${weather}`
     await xx.say(str)//发送消息
   }
   if(isJoke(text)) {
@@ -67,9 +72,7 @@ async function talk(text, contact, room) {
       jokes = await genJoke();
     }
     const joke = jokes.pop();
-    let str = `${joke.content}
-
-        -----来自 Yuf_bot`
+    let str = `${joke.content}`
     await xx.say(str)//发送消息
   }
 }
