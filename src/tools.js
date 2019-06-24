@@ -20,8 +20,7 @@ async function genWeather(provience, city) {
       live_index
     } = data;
 
-    weather = `${city}当前
-${tem}
+    weather = `${tem}
 ${status}
 ${humidity}
 ${wind}

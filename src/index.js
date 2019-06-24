@@ -44,10 +44,10 @@ async function start() {
   
   await wechaty.start();
 
-  // const hh = await wechaty.Contact.find({ alias: xuhaoqi })
-  // const job = schedule.scheduleJob('13 30 7 * * *', () => {
-  //   talk('天气', hh, null)
-  // });
+  const hh = await wechaty.Contact.find({ alias: xuhaoqi })
+  const job = schedule.scheduleJob('13 30 7 * * *', () => {
+    talk('天气', hh, null)
+  });
 }
 
 start()
