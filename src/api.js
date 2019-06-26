@@ -11,6 +11,15 @@ function getWeather(provience, city) {
   })
 }
 
+function getLaji(name) {
+  return request({
+    url: 'http://localhost:8888/laji',
+    params: {
+      name
+    }
+  })
+}
+
 function getJoke() {
   return request({
     url: 'http://v.juhe.cn/joke/randJoke.php',
@@ -45,4 +54,5 @@ module.exports = {
   getJoke: getJoke,
   getHuangli: getHuangli,
   getTodayOnhistory: getTodayOnhistory,
+  getLaji: getLaji,
 }

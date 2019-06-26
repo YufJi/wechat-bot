@@ -2,12 +2,10 @@ const { Wechaty, UrlLink, FileBox } = require('wechaty');
 const opn = require('chrome-opn');
 const schedule = require('node-schedule');
 const dayjs = require('dayjs')
-const { genWeather, genJoke, genHuangli, genTodayOnhistory } = require('./tools');
+const { genWeather, genJoke, genHuangli, genTodayOnhistory, genLaji } = require('./tools');
 const { testNickName, testTopic, xuhaoqi } = require('./config');
 
-const { regtianqi, regjoke, reghuangli, historyToday } = require('./regexp')
-
-const { resolve } = require('path')
+const { regtianqi, regjoke, reghuangli, reghistoryToday, reglaji } = require('./regexp')
 
 let jokes = [];
  
@@ -31,19 +29,20 @@ try {
 
 wechaty.on('message', async msg => {
   const room = msg.room();
-  const text = msg.text();
+  let text = msg.text();
   const contact = msg.from();
   
   if (room) {
     const topic = await room.topic();
     const isMention = await msg.mentionSelf();
     if (testTopic.includes(topic) && isMention) {
-      await talk(text, contact, room);
+      console.log(text, 'onmessage');
+      await talk(text, contact, room, msg);
     }
   } else {
     const nickname = (await contact.alias()) || contact.name();
     if (testNickName.includes(nickname)) {
-      await talk(text, contact, room);
+      await talk(text, contact, room, msg);
     }
   }
 })
@@ -58,11 +57,19 @@ async function start() {
   });
 }
 
-start()
+start();
 
-async function talk(text, contact, room) {
+async function talk(text, contact, room, message) {
   const real = room ? room : contact;
-  if(regtianqi.test(text)) {
+  if(text.indexOf('垃圾分类') > -1) {
+    if(room) {
+      const mentionList = await message.mention();
+      text = text.replace(`@${mentionList[0].name()}`, '')
+    }
+
+    const str = await genLaji(text.replace('垃圾分类', '').trim());
+    await real.say(str)
+  } else if(regtianqi.test(text)) {
     let province  = (contact.province() || '').toLowerCase();
     let city = (contact.city() || '').toLowerCase();
     const provinces = ['beijing', 'shanghai', 'chongqing', 'tianjin', 'xianggang', 'aomen', 'taiwan'];
@@ -70,23 +77,19 @@ async function talk(text, contact, room) {
       city = province;
     }
     let weather = await genWeather(province, city);
-    let str = `${weather}`
-    await real.say(str)//发送消息
-  }
-  if(regjoke.test(text)) {
+    await real.say(weather)//发送消息
+  } else if(regjoke.test(text)) {
     if(jokes.length === 0) {
       jokes = await genJoke();
     }
     const joke = jokes.pop();
     let str = `${joke.content}`
     await real.say(str)//发送消息
-  }
-  if(reghuangli.test(text)) {
+  } else if(reghuangli.test(text)) {
     const today = dayjs().format('YYYY-MM-DD')
     const str = await genHuangli(today);
     await real.say(str)
-  }
-  if(historyToday.test(text)) {
+  } else if(reghistoryToday.test(text)) {
     const today = dayjs().format('M/D');
     const str = await genTodayOnhistory(today);
     await real.say(str)

@@ -1,6 +1,6 @@
 const dayjs = require('dayjs')
 const _ = require('lodash')
-const { getWeather, getJoke, getHuangli, getTodayOnhistory } = require('./api')
+const { getWeather, getJoke, getHuangli, getTodayOnhistory, getLaji } = require('./api')
 const { regtianqi } = require('./regexp')
 
 async function genWeather(provience, city) {
@@ -35,7 +35,7 @@ ${live_index}`
     weather = 'ps: 获取数据失败'
   }
   
-  return weather.replace(regtianqi, '');
+  return weather.replace('天气', '');
 }
 
 
@@ -93,10 +93,23 @@ async function genTodayOnhistory(date) {
   return str;
 }
 
+async function genLaji(name) {
+  let str = ''
+  try {
+    const { data } = await getLaji(name)
+    str = data;
+  } catch (error) {
+    console.log(error);
+    str = 'ps: 获取数据失败'
+  }
+  return str;
+}
+
 
 module.exports = {
   genWeather: genWeather,
   genJoke: genJoke,
   genHuangli: genHuangli,
   genTodayOnhistory: genTodayOnhistory,
+  genLaji: genLaji,
 }
