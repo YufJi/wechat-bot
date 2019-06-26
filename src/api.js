@@ -30,8 +30,19 @@ function getHuangli(date) {
   })
 }
 
+function getTodayOnhistory(date) {
+  return request({
+    url: 'http://v.juhe.cn/todayOnhistory/queryEvent.php',
+    params: {
+      key: key.todayOnhistory,
+      date,
+    }
+  })
+}
+
 module.exports = {
   getWeather: getWeather,
   getJoke: getJoke,
   getHuangli: getHuangli,
+  getTodayOnhistory: getTodayOnhistory,
 }

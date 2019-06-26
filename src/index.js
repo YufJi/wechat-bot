@@ -2,10 +2,10 @@ const { Wechaty, UrlLink, FileBox } = require('wechaty');
 const opn = require('chrome-opn');
 const schedule = require('node-schedule');
 const dayjs = require('dayjs')
-const { genWeather, genJoke, genHuangli } = require('./tools');
+const { genWeather, genJoke, genHuangli, genTodayOnhistory } = require('./tools');
 const { testNickName, testTopic, xuhaoqi } = require('./config');
 
-const { regtianqi, regjoke, reghuangli } = require('./regexp')
+const { regtianqi, regjoke, reghuangli, historyToday } = require('./regexp')
 
 const { resolve } = require('path')
 
@@ -84,6 +84,11 @@ async function talk(text, contact, room) {
   if(reghuangli.test(text)) {
     const today = dayjs().format('YYYY-MM-DD')
     const str = await genHuangli(today);
+    await real.say(str)
+  }
+  if(historyToday.test(text)) {
+    const today = dayjs().format('M/D');
+    const str = await genTodayOnhistory(today);
     await real.say(str)
   }
 }
