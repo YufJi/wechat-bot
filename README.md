@@ -17,6 +17,10 @@ npm install
 npm run start
 ```
 
+## Feature
+
+查询天气、讲个笑话、查看老黄历
+
 ## Author
 
 👤 **YufJ**

@@ -9,12 +9,11 @@ module.exports = function request({ url, params, method }) {
     transformResponse: [function (data) {
       // Do whatever you want to transform the data
       data = JSON.parse(data);
-      console.log(data);
       const { error_code, result, reason } = data;
       if(error_code === 0) {
         return result;
       } else {
-        // throw new Error(reason);
+        throw new Error(reason);
       }
     }],
   });

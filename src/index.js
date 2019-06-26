@@ -1,13 +1,19 @@
-const { Wechaty } = require('wechaty') 
-const opn = require('chrome-opn')
+const { Wechaty, UrlLink, FileBox } = require('wechaty');
+const opn = require('chrome-opn');
 const schedule = require('node-schedule');
-const { genWeather, isJoke, genJoke } = require('./tools')
-const { testNickName, testTopic, xuhaoqi } = require('./config')
+const dayjs = require('dayjs')
+const { genWeather, genJoke, genHuangli } = require('./tools');
+const { testNickName, testTopic, xuhaoqi } = require('./config');
+
+const { regtianqi, regjoke, reghuangli } = require('./regexp')
+
+const { resolve } = require('path')
 
 let jokes = [];
  
 const wechaty = new Wechaty({
   name: 'bot_13',
+  // puppet: 'wechaty-puppet-padchat',
 });
 
 try {
@@ -27,15 +33,17 @@ wechaty.on('message', async msg => {
   const room = msg.room();
   const text = msg.text();
   const contact = msg.from();
+  
   if (room) {
     const topic = await room.topic();
-    if (testTopic.includes(topic)) {
-      await talk(text, contact, room)
+    const isMention = await msg.mentionSelf();
+    if (testTopic.includes(topic) && isMention) {
+      await talk(text, contact, room);
     }
   } else {
     const nickname = (await contact.alias()) || contact.name();
     if (testNickName.includes(nickname)) {
-      await talk(text, contact, room)
+      await talk(text, contact, room);
     }
   }
 })
@@ -53,26 +61,30 @@ async function start() {
 start()
 
 async function talk(text, contact, room) {
-  const xx = room ? room : contact
-  if(text.indexOf('天气') > -1) {
+  const real = room ? room : contact;
+  if(regtianqi.test(text)) {
     let province  = (contact.province() || '').toLowerCase();
     let city = (contact.city() || '').toLowerCase();
     const provinces = ['beijing', 'shanghai', 'chongqing', 'tianjin', 'xianggang', 'aomen', 'taiwan'];
     if (provinces.includes(province)) {
       city = province;
     }
-    console.log(province, city, 'citycitycity')
     let weather = await genWeather(province, city);
     let str = `${weather}`
-    await xx.say(str)//发送消息
+    await real.say(str)//发送消息
   }
-  if(isJoke(text)) {
+  if(regjoke.test(text)) {
     if(jokes.length === 0) {
       jokes = await genJoke();
     }
     const joke = jokes.pop();
     let str = `${joke.content}`
-    await xx.say(str)//发送消息
+    await real.say(str)//发送消息
+  }
+  if(reghuangli.test(text)) {
+    const today = dayjs().format('YYYY-MM-DD')
+    const str = await genHuangli(today);
+    await real.say(str)
   }
 }
 

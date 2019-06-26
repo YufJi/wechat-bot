@@ -2,13 +2,6 @@ const request = require('./service')
 const { key } = require('./config')
 
 function getWeather(provience, city) {
-  // return request({
-  //   url: 'http://v.juhe.cn/weather/index',
-  //   params: {
-  //     cityname: city ||'杭州',
-  //     key: key.weather
-  //   }
-  // })
   return request({
     url: 'http://localhost:8888/weather',
     params: {
@@ -27,7 +20,18 @@ function getJoke() {
   })
 }
 
+function getHuangli(date) {
+  return request({
+    url: 'http://v.juhe.cn/laohuangli/d',
+    params: {
+      key: key.huangli,
+      date
+    }
+  })
+}
+
 module.exports = {
   getWeather: getWeather,
-  getJoke: getJoke
+  getJoke: getJoke,
+  getHuangli: getHuangli,
 }

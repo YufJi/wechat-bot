@@ -1,6 +1,7 @@
 const dayjs = require('dayjs')
 const _ = require('lodash')
-const { getWeather, getJoke } = require('./api')
+const { getWeather, getJoke, getHuangli } = require('./api')
+const { regtianqi } = require('./regexp')
 
 async function genWeather(provience, city) {
   provience = provience || '上海';
@@ -34,36 +35,51 @@ ${live_index}`
     weather = 'ps: 获取数据失败'
   }
   
-  return weather.replace('天气', '');
+  return weather.replace(regtianqi, '');
 }
 
-
-function isJoke(text) {
-  const jokes = ['笑话', '不开心', '难过', '伤心']
-  let flag = false
-  for (let i = 0; i < jokes.length; i++) {
-    const element = jokes[i];
-    if (text.indexOf(element) > -1) {
-      flag = true;
-      break;
-    }
-  }
-  return flag;
-}
 
 async function genJoke() {
   try {
     const { data = {} } = await getJoke();
-    return data
+    return data;
   } catch (err) {
     console.log(err)
   }
+}
+
+async function genHuangli(date) {
+  let haungli = '';
+  try {
+    const { data } = await getHuangli(date)
+    const map = {
+      'yangli': '阳历',
+      'yinli': '阴历',
+      'wuxing': '五行',
+      'chongsha': '冲煞',
+      'baiji': '拜祭',
+      'jishen': '吉升',
+      'yi': '宜',
+      'xiongshen': '凶神',
+      'ji': '忌'
+    };
+    for (const key in map) {
+      if (map.hasOwnProperty(key)) {
+        const element = map[key];
+        haungli+= `${element}: ${data[key]} \n`
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    haungli = 'ps: 获取数据失 败'
+  }
+  return haungli;
 }
 
 
 
 module.exports = {
   genWeather: genWeather,
-  isJoke: isJoke,
   genJoke: genJoke,
+  genHuangli: genHuangli,
 }
