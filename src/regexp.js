@@ -7,7 +7,7 @@ const huangli = /([\w\W]*)(黄历)([\w\W]*)/ig;
 
 const reghistoryToday = /([\w\W]*)(历史上的今天|历史今天|历史的今天)([\w\W]*)/ig;
 
-const reglaji = /([\w\W]*)(垃圾分类)([\w\W]*)/ig;
+const reglaji = /([\s\w\W]*)(垃圾分类)([\s\w\W]*)/ig;
 
 module.exports = {
   regtianqi: tianqi,

@@ -34,8 +34,7 @@ wechaty.on('message', async msg => {
   
   if (room) {
     const topic = await room.topic();
-    const isMention = await msg.mentionSelf();
-    if (testTopic.includes(topic) && isMention) {
+    if (testTopic.includes(topic) && await msg.mentionSelf()) {
       console.log(text, 'onmessage');
       await talk(text, contact, room, msg);
     }
@@ -61,12 +60,11 @@ start();
 
 async function talk(text, contact, room, message) {
   const real = room ? room : contact;
-  if(text.indexOf('垃圾分类') > -1) {
+  if(text.includes('垃圾分类')) {
     if(room) {
       const mentionList = await message.mention();
-      text = text.replace(`@${mentionList[0].name()}`, '')
+      text = text.replace(`@${mentionList[0].name()}`, '');
     }
-
     const str = await genLaji(text.replace('垃圾分类', '').trim());
     await real.say(str)
   } else if(regtianqi.test(text)) {
