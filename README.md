@@ -17,11 +17,6 @@ npm install
 npm run start
 ```
 
-## screenshot
-
-<img src="./screenshot/WechatIMG3.jpeg" width="200" />
-
-
 ## Feature
 
 ```
@@ -32,6 +27,11 @@ npm run start
 
 todo (可以在讨论组中接入提测打包等小功能。。。
 ```
+
+## screenshot
+
+<img src="./screenshot/WechatIMG3.jpeg" width="200" />
+
 
 ## Author
 
