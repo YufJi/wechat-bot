@@ -17,6 +17,11 @@ npm install
 npm run start
 ```
 
+## screenshot
+
+<img src="./screenshot/WechatIMG3.jpeg" width="200" />
+
+
 ## Feature
 
 ```
